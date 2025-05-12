@@ -1,50 +1,84 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { ChartBar, FileText, Calculator, Users } from "lucide-react";
+import { ChartBar, FileText, Calculator, Users, LineChart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const pricingPlans = [
+const simpleLCAPlans = [
   {
-    name: "基础版",
-    price: "¥9,800",
-    description: "适合小型企业和单个产品",
+    name: "碳足迹基础版",
+    price: "$59-$79",
+    description: "简单/复杂产品",
     features: [
       "单个产品碳足迹计算",
-      "基本的排放因子数据库",
-      "PDF格式报告",
-      "邮件技术支持"
+      "摇篮到大门范围",
+      "Excel格式结果",
+      "结果图表展示",
+      "5天内发送结果到邮箱"
     ],
     icon: <Calculator className="h-8 w-8 text-eco-green" />
   },
   {
-    name: "专业版",
-    price: "¥29,800",
-    description: "适合中型企业和多个产品",
+    name: "环境足迹基础版",
+    price: "$79-$99",
+    description: "简单/复杂产品",
     features: [
-      "最多10个产品碳足迹计算",
-      "扩展的排放因子数据库",
-      "PDF和Excel格式报告",
+      "碳足迹及其他环境指标",
+      "摇篮到大门范围",
+      "Excel格式结果",
+      "结果图表展示",
+      "5天内发送结果到邮箱"
+    ],
+    icon: <ChartBar className="h-8 w-8 text-eco-blue" />
+  },
+  {
+    name: "碳足迹升级版",
+    price: "$129",
+    description: "碳足迹深度分析",
+    features: [
+      "单个产品碳足迹计算",
+      "摇篮到大门范围",
+      "Excel格式结果与图表",
+      "详细分析报告",
       "热点分析和减排建议",
-      "优先技术支持"
+      "技术支持服务"
     ],
     highlighted: true,
     icon: <ChartBar className="h-8 w-8 text-white" />
   },
   {
-    name: "企业版",
-    price: "¥69,800",
-    description: "适合大型企业和产品组合",
+    name: "环境足迹升级版",
+    price: "$179",
+    description: "全面环境足迹分析",
     features: [
-      "无限产品碳足迹计算",
-      "完整的排放因子数据库",
-      "自定义报告和数据导出",
-      "热点分析和减排路径规划",
-      "专属客户经理",
-      "现场培训和支持"
+      "产品环境足迹计算",
+      "摇篮到大门范围",
+      "Excel格式结果与图表",
+      "详细分析报告",
+      "热点分析和减排建议",
+      "技术支持服务"
+    ],
+    icon: <LineChart className="h-8 w-8 text-eco-green" />
+  }
+];
+
+const detailLCAPlans = [
+  {
+    name: "Detail LCA",
+    price: "$887",
+    description: "全生命周期深度分析",
+    features: [
+      "产品碳足迹或环境足迹",
+      "摇篮到坟墓全生命周期",
+      "详细分析报告",
+      "热点分析与减排路径",
+      "全面技术支持",
+      "项目管理服务"
     ],
     icon: <FileText className="h-8 w-8 text-eco-blue" />
   }
@@ -55,67 +89,157 @@ const Contact = () => {
     <>
       <section id="pricing" className="section bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16 max-w-3xl mx-auto">
+          <div className="text-center mb-12 max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-eco-darkBlue mb-4">
               服务套餐与价格
             </h2>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-lg text-muted-foreground mb-6">
               选择最适合您企业需求的碳足迹计算和LCA评估方案
             </p>
+            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+              <h3 className="font-medium text-eco-darkBlue mb-3">LCA评估范围说明</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div className="p-3 bg-eco-lightGreen rounded-lg">
+                  <p className="font-medium mb-1">摇篮到大门</p>
+                  <p className="text-muted-foreground">
+                    涵盖产品原材料获取和生产阶段的环境影响，适合初步评估和产品优化。
+                  </p>
+                </div>
+                <div className="p-3 bg-gray-100 rounded-lg">
+                  <p className="font-medium mb-1">摇篮到坟墓</p>
+                  <p className="text-muted-foreground">
+                    涵盖产品全生命周期(原材料、生产、使用、报废)的环境影响，提供全面的可持续性评估。
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {pricingPlans.map((plan, index) => (
-              <Card 
-                key={index} 
-                className={`border ${plan.highlighted ? 'relative border-eco-green shadow-lg' : 'shadow-md'} card-hover`}
-              >
-                {plan.highlighted && (
-                  <div className="absolute -top-4 left-0 right-0 flex justify-center">
-                    <span className="bg-eco-green text-white text-sm font-medium py-1 px-3 rounded-full">
-                      最受欢迎
-                    </span>
-                  </div>
-                )}
-                <CardContent className={`pt-6 ${plan.highlighted ? 'pb-8' : 'pb-6'}`}>
-                  <div className={`flex items-center justify-center w-16 h-16 mx-auto mb-5 rounded-full ${plan.highlighted ? 'bg-eco-green' : 'bg-eco-lightGray'}`}>
-                    {plan.icon}
-                  </div>
-                  <h3 className="text-xl font-semibold text-eco-darkBlue text-center mb-2">{plan.name}</h3>
-                  <div className="text-center mb-4">
-                    <span className="text-3xl font-bold text-eco-darkBlue">{plan.price}</span>
-                    <span className="text-muted-foreground">/年</span>
-                  </div>
-                  <p className="text-center text-muted-foreground mb-6">{plan.description}</p>
-                  <ul className="space-y-3 mb-8">
-                    {plan.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start">
-                        <svg className="h-5 w-5 text-eco-green mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button 
-                    asChild
-                    className={`w-full ${plan.highlighted ? 'bg-eco-green hover:bg-eco-green/90 text-white' : 'bg-white border border-eco-green text-eco-green hover:bg-eco-lightGreen'}`}
+          <Tabs defaultValue="simple" className="mb-8">
+            <TabsList className="grid grid-cols-2 mb-6 w-full max-w-md mx-auto">
+              <TabsTrigger value="simple">Simple LCA</TabsTrigger>
+              <TabsTrigger value="detail">Detail LCA</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="simple">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {simpleLCAPlans.map((plan, index) => (
+                  <Card 
+                    key={index} 
+                    className={`border ${plan.highlighted ? 'relative border-eco-green shadow-lg' : 'shadow-md'} card-hover`}
                   >
-                    <Link to="/payment">选择此方案</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                    {plan.highlighted && (
+                      <div className="absolute -top-4 left-0 right-0 flex justify-center">
+                        <span className="bg-eco-green text-white text-sm font-medium py-1 px-3 rounded-full">
+                          推荐方案
+                        </span>
+                      </div>
+                    )}
+                    <CardContent className={`pt-6 ${plan.highlighted ? 'pb-8' : 'pb-6'}`}>
+                      <div className={`flex items-center justify-center w-16 h-16 mx-auto mb-5 rounded-full ${plan.highlighted ? 'bg-eco-green' : 'bg-eco-lightGray'}`}>
+                        {plan.icon}
+                      </div>
+                      <h3 className="text-xl font-semibold text-eco-darkBlue text-center mb-2">{plan.name}</h3>
+                      <div className="text-center mb-4">
+                        <span className="text-3xl font-bold text-eco-darkBlue">{plan.price}</span>
+                        <span className="text-muted-foreground">/产品</span>
+                      </div>
+                      <p className="text-center text-muted-foreground mb-6">{plan.description}</p>
+                      <ul className="space-y-3 mb-8">
+                        {plan.features.map((feature, idx) => (
+                          <li key={idx} className="flex items-start">
+                            <svg className="h-5 w-5 text-eco-green mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span className="text-sm">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <Button 
+                        asChild
+                        className={`w-full ${plan.highlighted ? 'bg-eco-green hover:bg-eco-green/90 text-white' : 'bg-white border border-eco-green text-eco-green hover:bg-eco-lightGreen'}`}
+                      >
+                        <Link to="/payment">选择此方案</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="detail">
+              <div className="max-w-md mx-auto">
+                {detailLCAPlans.map((plan, index) => (
+                  <Card 
+                    key={index} 
+                    className="border shadow-lg card-hover"
+                  >
+                    <CardContent className="pt-6 pb-6">
+                      <div className="flex items-center justify-center w-16 h-16 mx-auto mb-5 rounded-full bg-eco-lightGray">
+                        {plan.icon}
+                      </div>
+                      <h3 className="text-xl font-semibold text-eco-darkBlue text-center mb-2">{plan.name}</h3>
+                      <div className="text-center mb-4">
+                        <span className="text-3xl font-bold text-eco-darkBlue">{plan.price}</span>
+                        <span className="text-muted-foreground">/产品</span>
+                      </div>
+                      <p className="text-center text-muted-foreground mb-6">{plan.description}</p>
+                      <ul className="space-y-3 mb-8">
+                        {plan.features.map((feature, idx) => (
+                          <li key={idx} className="flex items-start">
+                            <svg className="h-5 w-5 text-eco-green mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span className="text-sm">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <Button 
+                        asChild
+                        className="w-full bg-eco-green hover:bg-eco-green/90 text-white"
+                      >
+                        <Link to="/payment">选择此方案</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 max-w-3xl mx-auto mb-12">
+            <h3 className="font-semibold text-eco-darkBlue mb-4 text-center">服务流程</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="p-4 bg-eco-lightGreen bg-opacity-30 rounded-lg">
+                <h4 className="font-medium mb-2">基础版服务流程</h4>
+                <ol className="space-y-2 text-sm pl-5 list-decimal">
+                  <li>选择并支付相应服务</li>
+                  <li>填写产品基本信息</li>
+                  <li>我们团队进行分析</li>
+                  <li>5个工作日内将Excel结果和图表发送至您的邮箱</li>
+                </ol>
+              </div>
+              <div className="p-4 bg-eco-lightGreen bg-opacity-30 rounded-lg">
+                <h4 className="font-medium mb-2">升级版/Detail版服务流程</h4>
+                <ol className="space-y-2 text-sm pl-5 list-decimal">
+                  <li>选择并支付相应服务</li>
+                  <li>我们发送数据收集表至您的邮箱</li>
+                  <li>提供技术支持，协助数据收集</li>
+                  <li>开始项目并定期沟通进展</li>
+                  <li>交付最终报告和分析结果</li>
+                </ol>
+              </div>
+            </div>
           </div>
           
-          <div className="mt-16 flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
             <div className="flex items-center gap-2">
               <Users className="h-5 w-5 text-eco-green" />
-              <span>团队协作功能</span>
+              <span>专业团队支持</span>
             </div>
             <div className="flex items-center gap-2">
               <FileText className="h-5 w-5 text-eco-green" />
-              <span>详细的报告导出</span>
+              <span>详细的分析报告</span>
             </div>
             <div className="flex items-center gap-2">
               <ChartBar className="h-5 w-5 text-eco-green" />
