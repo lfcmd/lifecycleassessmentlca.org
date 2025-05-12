@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChartBar, FileText, Calculator, Users } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const pricingPlans = [
   {
@@ -98,9 +98,10 @@ const Contact = () => {
                     ))}
                   </ul>
                   <Button 
+                    asChild
                     className={`w-full ${plan.highlighted ? 'bg-eco-green hover:bg-eco-green/90 text-white' : 'bg-white border border-eco-green text-eco-green hover:bg-eco-lightGreen'}`}
                   >
-                    选择此方案
+                    <Link to="/payment">选择此方案</Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -126,8 +127,8 @@ const Contact = () => {
             <p className="text-muted-foreground mb-4">
               需要更多定制化服务？我们也提供完全定制的解决方案
             </p>
-            <Button variant="outline" className="border-eco-green text-eco-green hover:bg-eco-lightGreen">
-              联系我们获取定制方案
+            <Button asChild variant="outline" className="border-eco-green text-eco-green hover:bg-eco-lightGreen">
+              <Link to="/payment">查看所有支付选项</Link>
             </Button>
           </div>
         </div>
