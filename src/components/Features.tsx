@@ -43,6 +43,14 @@ const features = [
   }
 ];
 
+const carbonBenefits = [
+  "提升品牌声誉和竞争力",
+  "满足客户和投资者对环境数据的需求",
+  "识别减排机会，降低生产成本",
+  "符合国内外法规和市场准入要求",
+  "助力企业实现碳中和战略目标"
+];
+
 const Features = () => {
   return (
     <section id="features" className="section bg-gray-50">
@@ -68,22 +76,18 @@ const Features = () => {
           ))}
         </div>
         
+        {/* 碳足迹计算的好处 */}
         <div className="mt-20 bg-gradient-to-r from-eco-green/10 to-eco-blue/10 rounded-2xl p-8 md:p-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
               <h3 className="text-2xl md:text-3xl font-bold text-eco-darkBlue mb-4">
-                符合国际标准的碳足迹计算方法
+                计算产品碳足迹的好处
               </h3>
               <p className="text-lg text-muted-foreground mb-6">
-                我们的碳足迹计算基于ISO 14067、PAS 2050和温室气体核算体系(GHG Protocol)等国际标准，确保结果的权威性和可比性。
+                了解产品的碳足迹不仅有助于环境保护，还能为企业带来实际的商业价值。通过精确的碳足迹计算，企业可以:
               </p>
               <ul className="space-y-3">
-                {[
-                  "全面覆盖产品全生命周期的各个阶段",
-                  "支持多种分配方法和系统边界定义",
-                  "考虑直接排放和间接排放",
-                  "结果符合碳足迹标签和碳中和认证要求"
-                ].map((item, idx) => (
+                {carbonBenefits.map((item, idx) => (
                   <li key={idx} className="flex items-start">
                     <svg className="h-6 w-6 text-eco-green mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
@@ -102,8 +106,8 @@ const Features = () => {
                   {[
                     { name: "ISO 14067", progress: "95%" },
                     { name: "PAS 2050", progress: "90%" },
-                    { name: "GHG Protocol", progress: "100%" },
-                    { name: "碳中和标准", progress: "85%" },
+                    { name: "ISO 14040&14044", progress: "100%" },
+                    { name: "Product Category Rules", progress: "85%" },
                     { name: "环境产品声明(EPD)", progress: "80%" }
                   ].map((standard, idx) => (
                     <div key={idx}>

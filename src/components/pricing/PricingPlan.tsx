@@ -2,6 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Check } from "lucide-react";
 import { IconType } from "./types";
 
 interface PricingPlanProps {
@@ -53,9 +54,7 @@ const PricingPlan: React.FC<PricingPlanProps> = ({
         <ul className="space-y-3 mb-8">
           {features.map((feature, idx) => (
             <li key={idx} className="flex items-start">
-              <svg className="h-5 w-5 text-eco-green mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-              </svg>
+              <Check className="h-5 w-5 text-eco-green mr-2 flex-shrink-0" />
               <span className="text-sm">{feature}</span>
             </li>
           ))}
@@ -67,7 +66,7 @@ const PricingPlan: React.FC<PricingPlanProps> = ({
           onClick={() => onSelectPlan(priceId, id, false)}
           disabled={loading === id}
         >
-          {loading === id ? "处理中..." : "选择此方案"}
+          {loading === id ? "处理中..." : "选择并付款"}
         </Button>
       </CardFooter>
     </Card>

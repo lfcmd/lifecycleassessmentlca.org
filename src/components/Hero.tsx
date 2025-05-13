@@ -19,17 +19,8 @@ const Hero = () => {
             </h1>
             
             <p className="text-lg text-muted-foreground max-w-xl">
-              通过我们的SaaS平台，企业可以精确计算产品全生命周期的环境影响，获取产品碳足迹数据，助力绿色转型和可持续发展。
+              我们可以计算产品全生命周期的环境影响，根据您的需要，可以计算简要版 Simple LCA 和详细版 Detail LCA。Simple LCA 更加经济高效，Detail LCA 提供全面深入的分析。
             </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button className="bg-eco-green hover:bg-eco-green/90 text-white text-lg py-6 px-8">
-                免费试用
-              </Button>
-              <Button variant="outline" className="border-eco-green text-eco-green hover:bg-eco-lightGreen text-lg py-6 px-8">
-                了解更多
-              </Button>
-            </div>
             
             <div className="pt-8 flex items-center gap-8">
               <div className="flex">
@@ -97,11 +88,21 @@ const Hero = () => {
                   
                   <div>
                     <div className="flex justify-between text-sm mb-1">
-                      <span>使用与废弃</span>
-                      <span className="font-medium">10%</span>
+                      <span>使用阶段</span>
+                      <span className="font-medium">8%</span>
                     </div>
                     <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-eco-darkBlue rounded-full" style={{ width: "10%" }}></div>
+                      <div className="h-full bg-purple-400 rounded-full" style={{ width: "8%" }}></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span>废弃处理</span>
+                      <span className="font-medium">2%</span>
+                    </div>
+                    <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-eco-darkBlue rounded-full" style={{ width: "2%" }}></div>
                     </div>
                   </div>
                 </div>
