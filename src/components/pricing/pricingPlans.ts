@@ -17,7 +17,7 @@ export const simpleLCAPlans: PricingPlanType[] = [
       "结果图表展示",
       "5天内发送结果到邮箱"
     ],
-    icon: <Calculator className="h-8 w-8 text-eco-green" />
+    icon: React.createElement(Calculator, { className: "h-8 w-8 text-eco-green" })
   },
   {
     name: "碳足迹基础版 (复杂产品)",
@@ -32,7 +32,7 @@ export const simpleLCAPlans: PricingPlanType[] = [
       "结果图表展示",
       "5天内发送结果到邮箱"
     ],
-    icon: <Calculator className="h-8 w-8 text-eco-green" />
+    icon: React.createElement(Calculator, { className: "h-8 w-8 text-eco-green" })
   },
   {
     name: "环境足迹基础版 (简单产品)",
@@ -47,7 +47,7 @@ export const simpleLCAPlans: PricingPlanType[] = [
       "结果图表展示",
       "5天内发送结果到邮箱"
     ],
-    icon: <ChartBar className="h-8 w-8 text-eco-blue" />
+    icon: React.createElement(ChartBar, { className: "h-8 w-8 text-eco-blue" })
   },
   {
     name: "环境足迹基础版 (复杂产品)",
@@ -62,7 +62,7 @@ export const simpleLCAPlans: PricingPlanType[] = [
       "结果图表展示",
       "5天内发送结果到邮箱"
     ],
-    icon: <ChartBar className="h-8 w-8 text-eco-blue" />
+    icon: React.createElement(ChartBar, { className: "h-8 w-8 text-eco-blue" })
   },
   {
     name: "碳足迹升级版",
@@ -79,7 +79,7 @@ export const simpleLCAPlans: PricingPlanType[] = [
       "技术支持服务"
     ],
     highlighted: true,
-    icon: <ChartBar className="h-8 w-8 text-white" />
+    icon: React.createElement(ChartBar, { className: "h-8 w-8 text-white" })
   },
   {
     name: "环境足迹升级版",
@@ -95,7 +95,7 @@ export const simpleLCAPlans: PricingPlanType[] = [
       "热点分析和减排建议",
       "技术支持服务"
     ],
-    icon: <LineChart className="h-8 w-8 text-eco-green" />
+    icon: React.createElement(LineChart, { className: "h-8 w-8 text-eco-green" })
   }
 ];
 
@@ -114,6 +114,6 @@ export const detailLCAPlans: PricingPlanType[] = [
       "全面技术支持",
       "项目管理服务"
     ],
-    icon: <FileText className="h-8 w-8 text-eco-blue" />
+    icon: React.createElement(FileText, { className: "h-8 w-8 text-eco-blue" })
   }
 ];
