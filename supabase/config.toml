@@ -3,4 +3,3 @@ project_id = "yucrlozafkjqorqmppkn"
 
 [functions.stripe-checkout]
 verify_jwt = true
-

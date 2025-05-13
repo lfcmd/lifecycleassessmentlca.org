@@ -6,9 +6,15 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { ChartPie, Calculator as CalculatorIcon, FileText } from "lucide-react";
+import { ChartPie, Calculator as CalculatorIcon, FileText, CreditCard } from "lucide-react";
+import { ChartContainer } from "@/components/ui/chart";
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, Pie, PieChart, Cell, Line, LineChart } from "recharts";
+import { useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const EnhancedCalculator = () => {
+  const navigate = useNavigate();
   const [materialValues, setMaterialValues] = useState({
     material1: 10,
     material2: 5,
@@ -36,6 +42,7 @@ const EnhancedCalculator = () => {
   
   const [hasCalculated, setHasCalculated] = useState(false);
   const [activeTab, setActiveTab] = useState("chart");
+  const [loading, setLoading] = useState(false);
   
   const handleMaterialChange = (field: string, value: string) => {
     setMaterialValues({
@@ -80,9 +87,95 @@ const EnhancedCalculator = () => {
       }));
     }, 0);
   };
+
+  const handlePurchaseReport = async () => {
+    setLoading(true);
+    
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast({
+          title: "请先登录",
+          description: "您需要登录后才能购买完整报告",
+          variant: "destructive",
+        });
+        navigate("/login");
+        return;
+      }
+      
+      // Determine the current URL for success/cancel redirects
+      const origin = window.location.origin;
+      
+      const { data, error } = await supabase.functions.invoke("stripe-checkout", {
+        body: {
+          priceId: "price_1OuQWSJqIxGLUcoKi1OLyHPi", // Carbon Premium plan price ID
+          successUrl: `${origin}/payment-success`,
+          cancelUrl: `${origin}/payment-canceled`,
+          paymentMode: "payment",
+        }
+      });
+      
+      if (error) {
+        toast({
+          title: "支付失败",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (data?.url) {
+        // Open Stripe checkout in a new tab
+        window.open(data.url, '_blank');
+      } else {
+        toast({
+          title: "支付失败",
+          description: "无法创建支付会话",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      toast({
+        title: "支付失败",
+        description: "处理您的请求时出错",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // Prepare chart data
+  const chartData = [
+    { name: '原材料', value: results.materials, fill: '#4ade80' }, // eco-green
+    { name: '生产过程', value: results.production, fill: '#60a5fa' }, // eco-blue
+    { name: '物流运输', value: results.transport, fill: '#1e40af' }, // eco-darkBlue
+    { name: '使用阶段', value: results.usage, fill: '#a855f7' }, // purple
+    { name: '废弃处理', value: results.disposal, fill: '#eab308' }, // yellow
+  ];
+
+  // Prepare bar chart data
+  const barData = [
+    { name: '原材料', 排放量: results.materials },
+    { name: '生产过程', 排放量: results.production },
+    { name: '物流运输', 排放量: results.transport },
+    { name: '使用阶段', 排放量: results.usage },
+    { name: '废弃处理', 排放量: results.disposal },
+  ];
+
+  // Emission reduction potentials (example data)
+  const reductionPotentials = [
+    { category: '原材料', potential: 25, description: '选择低碳替代材料' },
+    { category: '生产过程', potential: 15, description: '提高能源效率' },
+    { category: '物流运输', potential: 30, description: '优化运输路线和方式' },
+    { category: '使用阶段', potential: 10, description: '提升产品能效' },
+    { category: '废弃处理', potential: 20, description: '实施回收再利用' },
+  ];
   
   return (
-    <section id="calculator" className="section">
+    <section id="calculator" className="section py-12">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-eco-darkBlue mb-4">
@@ -211,6 +304,76 @@ const EnhancedCalculator = () => {
                 </div>
               </CardContent>
             </Card>
+            
+            {hasCalculated && (
+              <div className="mt-8">
+                <Card className="border shadow-md">
+                  <CardContent className="pt-6">
+                    <h3 className="text-xl font-semibold text-eco-darkBlue mb-4">结果图表</h3>
+                    
+                    <Tabs defaultValue="pie">
+                      <TabsList className="grid grid-cols-3 mb-6">
+                        <TabsTrigger value="pie">饼图</TabsTrigger>
+                        <TabsTrigger value="bar">柱状图</TabsTrigger>
+                        <TabsTrigger value="line">趋势图</TabsTrigger>
+                      </TabsList>
+                      
+                      <TabsContent value="pie" className="h-80">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie
+                              data={chartData}
+                              cx="50%"
+                              cy="50%"
+                              labelLine={false}
+                              outerRadius={100}
+                              fill="#8884d8"
+                              dataKey="value"
+                              label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
+                            >
+                              {chartData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.fill} />
+                              ))}
+                            </Pie>
+                            <Tooltip formatter={(value) => [`${value} kg CO₂e`]} />
+                            <Legend />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </TabsContent>
+                      
+                      <TabsContent value="bar" className="h-80">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={barData} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis label={{ value: 'kg CO₂e', angle: -90, position: 'insideLeft' }} />
+                            <Tooltip formatter={(value) => [`${value} kg CO₂e`, '排放量']} />
+                            <Legend />
+                            <Bar dataKey="排放量" fill="#4ade80" />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </TabsContent>
+                      
+                      <TabsContent value="line" className="h-80">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart
+                            data={barData}
+                            margin={{ top: 5, right: 20, left: 20, bottom: 5 }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis label={{ value: 'kg CO₂e', angle: -90, position: 'insideLeft' }} />
+                            <Tooltip />
+                            <Legend />
+                            <Line type="monotone" dataKey="排放量" stroke="#4ade80" activeDot={{ r: 8 }} />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </TabsContent>
+                    </Tabs>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
           </div>
           
           <div>
@@ -219,178 +382,108 @@ const EnhancedCalculator = () => {
                 <div className="text-center mb-6">
                   <h3 className="text-xl font-semibold text-eco-darkBlue flex items-center justify-center gap-2">
                     <ChartPie className="h-5 w-5 text-eco-green" />
-                    计算结果
+                    结果分析
                   </h3>
                   <p className="text-muted-foreground text-sm mt-1">
-                    {hasCalculated ? "产品碳足迹分析" : "填写数据并点击计算按钮"}
+                    {hasCalculated ? "产品碳足迹分析结果" : "填写数据并点击计算按钮"}
                   </p>
                 </div>
                 
-                {hasCalculated && (
+                {hasCalculated ? (
                   <div className="flex-1 flex flex-col">
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
                       <TabsList className="grid grid-cols-3 mb-4">
-                        <TabsTrigger value="chart">图表</TabsTrigger>
-                        <TabsTrigger value="table">表格</TabsTrigger>
-                        <TabsTrigger value="report">报告</TabsTrigger>
+                        <TabsTrigger value="summary">概览</TabsTrigger>
+                        <TabsTrigger value="analysis">分析</TabsTrigger>
+                        <TabsTrigger value="reduction">减排</TabsTrigger>
                       </TabsList>
                       
-                      <TabsContent value="chart" className="flex-1 flex flex-col">
+                      <TabsContent value="summary" className="flex-1 flex flex-col">
                         <div className="space-y-4 mb-6 flex-1">
-                          <div>
-                            <div className="flex justify-between text-sm mb-1">
-                              <span>原材料</span>
-                              <span className="font-medium">{results.materials} kg CO<sub>2</sub>e</span>
+                          {chartData.map((item, index) => (
+                            <div key={index}>
+                              <div className="flex justify-between text-sm mb-1">
+                                <span>{item.name}</span>
+                                <span className="font-medium">{item.value} kg CO<sub>2</sub>e</span>
+                              </div>
+                              <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full rounded-full" 
+                                  style={{ width: `${(item.value / results.total) * 100}%`, backgroundColor: item.fill }}
+                                ></div>
+                              </div>
                             </div>
-                            <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-eco-green rounded-full" 
-                                style={{ width: `${(results.materials / results.total) * 100}%` }}
-                              ></div>
-                            </div>
-                          </div>
-                          
-                          <div>
-                            <div className="flex justify-between text-sm mb-1">
-                              <span>生产过程</span>
-                              <span className="font-medium">{results.production} kg CO<sub>2</sub>e</span>
-                            </div>
-                            <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-eco-blue rounded-full" 
-                                style={{ width: `${(results.production / results.total) * 100}%` }}
-                              ></div>
-                            </div>
-                          </div>
-                          
-                          <div>
-                            <div className="flex justify-between text-sm mb-1">
-                              <span>物流运输</span>
-                              <span className="font-medium">{results.transport} kg CO<sub>2</sub>e</span>
-                            </div>
-                            <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-eco-darkBlue rounded-full" 
-                                style={{ width: `${(results.transport / results.total) * 100}%` }}
-                              ></div>
-                            </div>
-                          </div>
-                          
-                          <div>
-                            <div className="flex justify-between text-sm mb-1">
-                              <span>使用阶段</span>
-                              <span className="font-medium">{results.usage} kg CO<sub>2</sub>e</span>
-                            </div>
-                            <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-purple-400 rounded-full" 
-                                style={{ width: `${(results.usage / results.total) * 100}%` }}
-                              ></div>
-                            </div>
-                          </div>
-                          
-                          <div>
-                            <div className="flex justify-between text-sm mb-1">
-                              <span>废弃处理</span>
-                              <span className="font-medium">{results.disposal} kg CO<sub>2</sub>e</span>
-                            </div>
-                            <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-yellow-500 rounded-full" 
-                                style={{ width: `${(results.disposal / results.total) * 100}%` }}
-                              ></div>
-                            </div>
-                          </div>
+                          ))}
                         </div>
                       </TabsContent>
                       
-                      <TabsContent value="table" className="flex-1">
-                        <div className="border rounded-md overflow-hidden">
-                          <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                              <tr>
-                                <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                  阶段
-                                </th>
-                                <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                  排放量 (kg CO<sub>2</sub>e)
-                                </th>
-                                <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                  占比
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                              <tr>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">原材料</td>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-right text-gray-900">{results.materials}</td>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-right text-gray-900">
-                                  {((results.materials / results.total) * 100).toFixed(1)}%
-                                </td>
-                              </tr>
-                              <tr>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">生产过程</td>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-right text-gray-900">{results.production}</td>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-right text-gray-900">
-                                  {((results.production / results.total) * 100).toFixed(1)}%
-                                </td>
-                              </tr>
-                              <tr>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">物流运输</td>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-right text-gray-900">{results.transport}</td>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-right text-gray-900">
-                                  {((results.transport / results.total) * 100).toFixed(1)}%
-                                </td>
-                              </tr>
-                              <tr>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">使用阶段</td>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-right text-gray-900">{results.usage}</td>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-right text-gray-900">
-                                  {((results.usage / results.total) * 100).toFixed(1)}%
-                                </td>
-                              </tr>
-                              <tr>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">废弃处理</td>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-right text-gray-900">{results.disposal}</td>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-right text-gray-900">
-                                  {((results.disposal / results.total) * 100).toFixed(1)}%
-                                </td>
-                              </tr>
-                              <tr className="bg-gray-50 font-medium">
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">总计</td>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-right text-gray-900">{results.total}</td>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm text-right text-gray-900">100%</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </TabsContent>
-                      
-                      <TabsContent value="report" className="flex-1">
-                        <div className="space-y-4">
-                          <div className="flex items-center">
-                            <FileText className="h-5 w-5 text-eco-green mr-2" />
-                            <h4 className="font-medium">碳足迹分析报告</h4>
-                          </div>
-                          <p className="text-sm text-muted-foreground">
-                            根据您提供的数据，该产品的总碳足迹为 <strong>{results.total} kg CO<sub>2</sub>e</strong>。
+                      <TabsContent value="analysis" className="flex-1">
+                        <div className="space-y-4 text-sm">
+                          <p className="mb-2">
+                            您的产品碳足迹为 <strong>{results.total} kg CO<sub>2</sub>e</strong>，主要排放来源于：
                           </p>
-                          <div>
-                            <h5 className="text-sm font-medium mb-1">主要排放源</h5>
-                            <p className="text-sm text-muted-foreground">
-                              原材料阶段贡献了最大的碳排放，占总排放的{((results.materials / results.total) * 100).toFixed(1)}%。
-                              建议考虑使用低碳替代材料或优化材料使用量。
+                          <ul className="list-disc pl-5 space-y-1">
+                            <li>
+                              <strong>原材料阶段</strong> - 占总排放的 {((results.materials / results.total) * 100).toFixed(1)}%
+                              <p className="text-muted-foreground mt-0.5">主要由原材料开采和加工产生</p>
+                            </li>
+                            <li>
+                              <strong>生产过程</strong> - 占总排放的 {((results.production / results.total) * 100).toFixed(1)}%
+                              <p className="text-muted-foreground mt-0.5">主要由能源消耗和工艺排放产生</p>
+                            </li>
+                            <li>
+                              <strong>物流运输</strong> - 占总排放的 {((results.transport / results.total) * 100).toFixed(1)}%
+                              <p className="text-muted-foreground mt-0.5">
+                                {transportValues.method === "truck" ? "卡车运输" : 
+                                 transportValues.method === "ship" ? "船舶运输" : "航空运输"}
+                                排放系数较{transportValues.method === "air" ? "高" : "低"}
+                              </p>
+                            </li>
+                          </ul>
+                          <div className="mt-4">
+                            <p className="font-medium mb-1">碳足迹热点分析</p>
+                            <p>
+                              {
+                                Math.max(results.materials, results.production, results.transport, results.usage, results.disposal) === results.materials
+                                ? "原材料是碳排放主要热点，建议关注材料选择和优化。"
+                                : Math.max(results.materials, results.production, results.transport, results.usage, results.disposal) === results.production
+                                ? "生产过程是碳排放主要热点，建议关注能源效率和清洁能源使用。"
+                                : "物流运输是碳排放主要热点，建议优化运输路线和方式。"
+                              }
                             </p>
                           </div>
-                          <div>
-                            <h5 className="text-sm font-medium mb-1">减排建议</h5>
-                            <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
-                              <li>寻找低碳原材料替代方案</li>
-                              <li>提高材料利用效率，减少浪费</li>
-                              <li>优化生产能源效率</li>
-                              <li>选择低碳运输方式</li>
-                              <li>延长产品寿命，减少废弃物产生</li>
-                            </ul>
+                        </div>
+                      </TabsContent>
+                      
+                      <TabsContent value="reduction" className="flex-1">
+                        <div className="space-y-4">
+                          <p className="text-sm mb-2">根据您的产品碳足迹分析，我们建议以下减排措施：</p>
+                          
+                          <div className="space-y-3">
+                            {reductionPotentials.map((item, index) => (
+                              <div key={index} className="bg-gray-50 rounded-md p-3">
+                                <div className="flex justify-between items-center mb-1">
+                                  <span className="font-medium text-sm">{item.category}</span>
+                                  <span className="text-eco-green text-sm font-medium">-{item.potential}%</span>
+                                </div>
+                                <p className="text-xs text-muted-foreground">{item.description}</p>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          <div className="mt-4 pt-4 border-t border-dashed border-gray-200">
+                            <p className="text-sm font-medium mb-2">获取详细的减排方案</p>
+                            <p className="text-xs text-muted-foreground mb-3">
+                              我们的专业团队可以为您提供更加详细的产品碳足迹分析和定制化减排方案
+                            </p>
+                            <Button
+                              className="w-full bg-eco-green hover:bg-eco-green/90 text-white"
+                              onClick={handlePurchaseReport}
+                              disabled={loading}
+                            >
+                              <CreditCard className="mr-2 h-4 w-4" />
+                              {loading ? "处理中..." : "购买完整碳足迹报告"}
+                            </Button>
                           </div>
                         </div>
                       </TabsContent>
@@ -403,9 +496,7 @@ const EnhancedCalculator = () => {
                       </div>
                     </div>
                   </div>
-                )}
-                
-                {!hasCalculated && (
+                ) : (
                   <div className="flex-1 flex flex-col items-center justify-center text-center text-muted-foreground">
                     <ChartPie className="h-12 w-12 text-muted mb-4" />
                     <p>输入数据并计算后，这里将显示您的产品碳足迹分析结果</p>
@@ -413,6 +504,33 @@ const EnhancedCalculator = () => {
                 )}
               </CardContent>
             </Card>
+            
+            {hasCalculated && (
+              <div className="mt-4">
+                <Card className="border border-eco-green shadow-md">
+                  <CardContent className="pt-4 pb-4">
+                    <h4 className="font-medium flex items-center gap-2 mb-2">
+                      <FileText className="h-4 w-4 text-eco-green" />
+                      碳足迹管理的好处
+                    </h4>
+                    <ul className="text-sm space-y-1 text-muted-foreground">
+                      <li className="flex items-start gap-1">
+                        <span>•</span> <span>满足合规要求，应对碳关税</span>
+                      </li>
+                      <li className="flex items-start gap-1">
+                        <span>•</span> <span>提高资源效率，降低运营成本</span>
+                      </li>
+                      <li className="flex items-start gap-1">
+                        <span>•</span> <span>增强品牌价值与市场竞争力</span>
+                      </li>
+                      <li className="flex items-start gap-1">
+                        <span>•</span> <span>满足客户与投资者对可持续发展的期望</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
           </div>
         </div>
         
