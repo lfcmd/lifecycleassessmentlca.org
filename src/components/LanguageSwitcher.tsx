@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Language } from "lucide-react";
+import { Languages } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const LanguageSwitcher: React.FC = () => {
@@ -31,7 +31,7 @@ const LanguageSwitcher: React.FC = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon" className="rounded-full w-9 h-9">
-          <Language className="h-4 w-4" />
+          <Languages className="h-4 w-4" />
           <span className="sr-only">切换语言</span>
         </Button>
       </DropdownMenuTrigger>
