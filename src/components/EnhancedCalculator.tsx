@@ -2,15 +2,11 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChartPie } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import CalculatorForm from "./calculator/CalculatorForm";
 import ResultCharts from "./calculator/ResultCharts";
 import AnalysisPanel from "./calculator/AnalysisPanel";
 
 const EnhancedCalculator = () => {
-  const navigate = useNavigate();
   const [materialValues, setMaterialValues] = useState({
     material1: 10,
     material2: 5,
@@ -83,65 +79,6 @@ const EnhancedCalculator = () => {
       }));
     }, 0);
   };
-
-  const handlePurchaseReport = async () => {
-    setLoading(true);
-    
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        toast({
-          title: "请先登录",
-          description: "您需要登录后才能购买完整报告",
-          variant: "destructive",
-        });
-        navigate("/login");
-        return;
-      }
-      
-      // Determine the current URL for success/cancel redirects
-      const origin = window.location.origin;
-      
-      const { data, error } = await supabase.functions.invoke("stripe-checkout", {
-        body: {
-          priceId: "price_1OuQWSJqIxGLUcoKi1OLyHPi", // Carbon Premium plan price ID
-          successUrl: `${origin}/payment-success`,
-          cancelUrl: `${origin}/payment-canceled`,
-          paymentMode: "payment",
-        }
-      });
-      
-      if (error) {
-        toast({
-          title: "支付失败",
-          description: error.message,
-          variant: "destructive",
-        });
-        return;
-      }
-      
-      if (data?.url) {
-        // Open Stripe checkout in a new tab
-        window.open(data.url, '_blank');
-      } else {
-        toast({
-          title: "支付失败",
-          description: "无法创建支付会话",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Payment error:", error);
-      toast({
-        title: "支付失败",
-        description: "处理您的请求时出错",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
   
   // Prepare chart data
   const chartData = [
@@ -212,7 +149,7 @@ const EnhancedCalculator = () => {
                   transportValues={transportValues}
                   activeTab={activeTab}
                   setActiveTab={setActiveTab}
-                  handlePurchaseReport={handlePurchaseReport}
+                  handlePurchaseReport={() => {}} // This is now unused but kept for compatibility
                   loading={loading}
                 />
               </CardContent>
