@@ -44,6 +44,8 @@ const translations: Record<Language, Record<string, string>> = {
     'signUpSuccess': '注册成功',
     'loginSuccess': '登录成功',
     'logoutSuccess': '退出成功',
+    'welcomeBack': '欢迎回来',
+    'loginFailed': '登录失败',
     
     // Payment
     'chooseService': '选择适合您的服务方案',
@@ -87,6 +89,8 @@ const translations: Record<Language, Record<string, string>> = {
     'signUpSuccess': 'Sign up successful',
     'loginSuccess': 'Login successful',
     'logoutSuccess': 'Logout successful',
+    'welcomeBack': 'Welcome back',
+    'loginFailed': 'Login failed',
     
     // Payment
     'chooseService': 'Choose a Service Plan',
