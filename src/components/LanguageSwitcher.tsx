@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,22 +9,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Languages } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const LanguageSwitcher: React.FC = () => {
-  const [currentLanguage, setCurrentLanguage] = useState<string>("中文");
+  const { language, setLanguage, t } = useLanguage();
   const { toast } = useToast();
 
-  const handleLanguageChange = (language: string) => {
-    setCurrentLanguage(language);
+  const handleLanguageChange = (newLanguage: 'zh' | 'en') => {
+    setLanguage(newLanguage);
     
     toast({
-      title: "语言已切换",
-      description: `已将语言切换为${language}`,
+      title: language === 'zh' ? "语言已切换" : "Language Changed",
+      description: language === 'zh' 
+        ? `已将语言切换为${newLanguage === 'zh' ? '中文' : 'English'}`
+        : `Language changed to ${newLanguage === 'zh' ? 'Chinese' : 'English'}`,
       duration: 2000,
     });
-    
-    // Here you would implement the actual language change logic
-    // This is just a placeholder for demonstration purposes
   };
 
   return (
@@ -32,19 +32,19 @@ const LanguageSwitcher: React.FC = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon" className="rounded-full w-9 h-9">
           <Languages className="h-4 w-4" />
-          <span className="sr-only">切换语言</span>
+          <span className="sr-only">{language === 'zh' ? '切换语言' : 'Change language'}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem 
-          onClick={() => handleLanguageChange("中文")}
-          className={currentLanguage === "中文" ? "bg-muted" : ""}
+          onClick={() => handleLanguageChange('zh')}
+          className={language === 'zh' ? "bg-muted" : ""}
         >
           中文
         </DropdownMenuItem>
         <DropdownMenuItem 
-          onClick={() => handleLanguageChange("English")}
-          className={currentLanguage === "English" ? "bg-muted" : ""}
+          onClick={() => handleLanguageChange('en')}
+          className={language === 'en' ? "bg-muted" : ""}
         >
           English
         </DropdownMenuItem>

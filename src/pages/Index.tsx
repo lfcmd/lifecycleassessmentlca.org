@@ -7,8 +7,11 @@ import EnhancedCalculator from "@/components/EnhancedCalculator";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const Index = () => {
+  const { language } = useLanguage();
+  
   return (
     <div className="min-h-screen flex flex-col">
       <div className="fixed top-4 right-4 z-50">

@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Leaf } from "lucide-react";
+import { Link } from "react-router-dom";
+import AuthButtons from "@/components/auth/AuthButtons";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -11,20 +13,23 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <Leaf className="h-8 w-8 text-eco-green mr-2" />
-            <span className="text-2xl font-bold text-eco-darkBlue">LCA<span className="text-eco-green">计算</span></span>
+            <Link to="/" className="flex items-center">
+              <Leaf className="h-8 w-8 text-eco-green mr-2" />
+              <span className="text-2xl font-bold text-eco-darkBlue">LCA<span className="text-eco-green">计算</span></span>
+            </Link>
           </div>
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
+            <Link to="/" className="text-foreground hover:text-eco-green transition-colors">首页</Link>
             <a href="#features" className="text-foreground hover:text-eco-green transition-colors">产品特点</a>
             <a href="#calculator" className="text-foreground hover:text-eco-green transition-colors">碳足迹计算</a>
-            <a href="#pricing" className="text-foreground hover:text-eco-green transition-colors">服务价格</a>
+            <Link to="/products" className="text-foreground hover:text-eco-green transition-colors">服务价格</Link>
             <a href="#contact" className="text-foreground hover:text-eco-green transition-colors">联系我们</a>
           </nav>
           
-          <div className="hidden md:block">
-            <Button className="bg-eco-green hover:bg-eco-green/90 text-white">开始试用</Button>
+          <div className="hidden md:flex items-center space-x-4">
+            <AuthButtons />
           </div>
           
           {/* Mobile menu button */}
@@ -51,11 +56,12 @@ const Navbar = () => {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden pt-4 pb-4 animate-fade-in">
+            <Link to="/" className="block py-2 text-foreground hover:text-eco-green transition-colors">首页</Link>
             <a href="#features" className="block py-2 text-foreground hover:text-eco-green transition-colors">产品特点</a>
             <a href="#calculator" className="block py-2 text-foreground hover:text-eco-green transition-colors">碳足迹计算</a>
-            <a href="#pricing" className="block py-2 text-foreground hover:text-eco-green transition-colors">服务价格</a>
+            <Link to="/products" className="block py-2 text-foreground hover:text-eco-green transition-colors">服务价格</Link>
             <a href="#contact" className="block py-2 text-foreground hover:text-eco-green transition-colors">联系我们</a>
-            <Button className="mt-4 w-full bg-eco-green hover:bg-eco-green/90 text-white">开始试用</Button>
+            <AuthButtons isMobile />
           </div>
         )}
       </div>
