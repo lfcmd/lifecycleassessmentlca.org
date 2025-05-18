@@ -278,7 +278,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-medium text-eco-darkBlue mb-1">联系电话</h3>
-                    <p className="text-muted-foreground">+86 400-123-4567</p>
+                    <p className="text-muted-foreground">+86 14749944631</p>
                   </div>
                 </div>
                 
@@ -290,24 +290,9 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-medium text-eco-darkBlue mb-1">电子邮箱</h3>
-                    <p className="text-muted-foreground">contact@lcacalc.com</p>
+                    <p className="text-muted-foreground">fan405141@gmail.com</p>
                   </div>
                 </div>
-                
-                <div className="flex items-start">
-                  <div className="bg-eco-lightGreen p-3 rounded-lg mr-4">
-                    <svg className="h-6 w-6 text-eco-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-eco-darkBlue mb-1">办公地址</h3>
-                    <p className="text-muted-foreground">上海市浦东新区张江高科技园区博云路2号</p>
-                  </div>
-                </div>
-              </div>
-            </div>
             
             <div>
               <Card className="border shadow-md">
