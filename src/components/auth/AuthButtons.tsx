@@ -6,12 +6,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { UserCircle, LogOut } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface AuthButtonsProps {
   isMobile?: boolean;
 }
 
 const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
+  const { t } = useLanguage();
   const [user, setUser] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
   const navigate = useNavigate();
@@ -42,14 +44,14 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
     try {
       await supabase.auth.signOut();
       toast({
-        title: "退出成功",
-        description: "您已成功退出登录",
+        title: t('logoutSuccess'),
+        description: t('logoutSuccess'),
       });
       navigate("/");
     } catch (error) {
       console.error("Error signing out:", error);
       toast({
-        title: "退出失败",
+        title: t('loginFailed'),
         description: "退出登录时出错，请重试",
         variant: "destructive",
       });
@@ -66,13 +68,13 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
       return (
         <>
           <Link to="/dashboard" className="block py-2 text-foreground hover:text-eco-green transition-colors">
-            个人中心
+            {t('dashboard')}
           </Link>
           <button 
             onClick={handleSignOut}
             className="block py-2 text-foreground hover:text-eco-green transition-colors"
           >
-            退出登录
+            {t('logout')}
           </button>
         </>
       );
@@ -83,12 +85,12 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
         <Button variant="outline" asChild>
           <Link to="/dashboard">
             <UserCircle className="mr-2 h-4 w-4" />
-            个人中心
+            {t('dashboard')}
           </Link>
         </Button>
         <Button variant="ghost" onClick={handleSignOut}>
           <LogOut className="mr-2 h-4 w-4" />
-          退出
+          {t('logout')}
         </Button>
       </div>
     );
@@ -99,10 +101,10 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
     return (
       <>
         <Link to="/login" className="block py-2 text-foreground hover:text-eco-green transition-colors">
-          登录
+          {t('login')}
         </Link>
         <Link to="/register" className="block py-2 text-foreground hover:text-eco-green transition-colors">
-          注册
+          {t('register')}
         </Link>
       </>
     );
@@ -111,10 +113,10 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
   return (
     <div className="flex items-center space-x-4">
       <Button variant="outline" asChild>
-        <Link to="/login">登录</Link>
+        <Link to="/login">{t('login')}</Link>
       </Button>
       <Button className="bg-eco-green hover:bg-eco-green/90 text-white" asChild>
-        <Link to="/register">注册</Link>
+        <Link to="/register">{t('register')}</Link>
       </Button>
     </div>
   );

@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Leaf } from "lucide-react";
 import { Link } from "react-router-dom";
 import AuthButtons from "@/components/auth/AuthButtons";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <header className="fixed w-full bg-white/80 backdrop-blur-md z-50 shadow-sm">
@@ -15,17 +17,17 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
               <Leaf className="h-8 w-8 text-eco-green mr-2" />
-              <span className="text-2xl font-bold text-eco-darkBlue">LCA<span className="text-eco-green">计算</span></span>
+              <span className="text-2xl font-bold text-eco-darkBlue">LCA<span className="text-eco-green">{t('calculator')}</span></span>
             </Link>
           </div>
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-foreground hover:text-eco-green transition-colors">首页</Link>
-            <a href="#features" className="text-foreground hover:text-eco-green transition-colors">产品特点</a>
-            <a href="#calculator" className="text-foreground hover:text-eco-green transition-colors">碳足迹计算</a>
-            <Link to="/products" className="text-foreground hover:text-eco-green transition-colors">服务价格</Link>
-            <a href="#contact" className="text-foreground hover:text-eco-green transition-colors">联系我们</a>
+            <Link to="/" className="text-foreground hover:text-eco-green transition-colors">{t('home')}</Link>
+            <a href="#features" className="text-foreground hover:text-eco-green transition-colors">{t('features')}</a>
+            <a href="#calculator" className="text-foreground hover:text-eco-green transition-colors">{t('calculator')}</a>
+            <Link to="/products" className="text-foreground hover:text-eco-green transition-colors">{t('pricing')}</Link>
+            <a href="#contact" className="text-foreground hover:text-eco-green transition-colors">{t('contact')}</a>
           </nav>
           
           <div className="hidden md:flex items-center space-x-4">
@@ -56,11 +58,11 @@ const Navbar = () => {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden pt-4 pb-4 animate-fade-in">
-            <Link to="/" className="block py-2 text-foreground hover:text-eco-green transition-colors">首页</Link>
-            <a href="#features" className="block py-2 text-foreground hover:text-eco-green transition-colors">产品特点</a>
-            <a href="#calculator" className="block py-2 text-foreground hover:text-eco-green transition-colors">碳足迹计算</a>
-            <Link to="/products" className="block py-2 text-foreground hover:text-eco-green transition-colors">服务价格</Link>
-            <a href="#contact" className="block py-2 text-foreground hover:text-eco-green transition-colors">联系我们</a>
+            <Link to="/" className="block py-2 text-foreground hover:text-eco-green transition-colors">{t('home')}</Link>
+            <a href="#features" className="block py-2 text-foreground hover:text-eco-green transition-colors">{t('features')}</a>
+            <a href="#calculator" className="block py-2 text-foreground hover:text-eco-green transition-colors">{t('calculator')}</a>
+            <Link to="/products" className="block py-2 text-foreground hover:text-eco-green transition-colors">{t('pricing')}</Link>
+            <a href="#contact" className="block py-2 text-foreground hover:text-eco-green transition-colors">{t('contact')}</a>
             <AuthButtons isMobile />
           </div>
         )}

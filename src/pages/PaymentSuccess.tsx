@@ -3,8 +3,11 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const PaymentSuccess = () => {
+  const { t } = useLanguage();
+  
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-md w-full text-center">
@@ -12,17 +15,17 @@ const PaymentSuccess = () => {
           <CheckCircle className="h-16 w-16 text-eco-green" />
         </div>
         <h1 className="text-2xl md:text-3xl font-bold text-eco-darkBlue mb-4">
-          支付成功！
+          {t('paymentSuccess')}
         </h1>
         <p className="mb-6 text-muted-foreground">
-          感谢您的购买。您的订单已经成功处理，您现在可以开始使用我们的服务了。
+          {t('paymentSuccess')}
         </p>
         <div className="flex flex-col md:flex-row gap-4 justify-center">
           <Button asChild className="bg-eco-green hover:bg-eco-green/90 text-white">
-            <Link to="/dashboard">进入控制台</Link>
+            <Link to="/dashboard">{t('dashboard')}</Link>
           </Button>
           <Button asChild variant="outline" className="border-eco-green text-eco-green hover:bg-eco-lightGreen">
-            <Link to="/">返回首页</Link>
+            <Link to="/">{t('returnHome')}</Link>
           </Button>
         </div>
       </div>

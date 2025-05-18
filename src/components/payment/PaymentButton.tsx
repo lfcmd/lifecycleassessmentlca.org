@@ -4,6 +4,7 @@ import { Button, ButtonProps } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface PaymentButtonProps extends Omit<ButtonProps, "onClick"> {
   priceId: string;
@@ -16,7 +17,7 @@ interface PaymentButtonProps extends Omit<ButtonProps, "onClick"> {
 
 const PaymentButton = ({
   priceId,
-  label = "立即购买",
+  label,
   successUrl = `/payment-success`,
   cancelUrl = `/payment-canceled`,
   paymentMode = "payment",
@@ -26,6 +27,7 @@ const PaymentButton = ({
 }: PaymentButtonProps) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handlePayment = async () => {
     setLoading(true);
@@ -35,8 +37,8 @@ const PaymentButton = ({
       
       if (!session) {
         toast({
-          title: "请先登录",
-          description: "您需要登录后才能进行支付",
+          title: t('loginFailed'),
+          description: t('loginFailed'),
           variant: "destructive",
         });
         navigate("/login");
@@ -57,7 +59,7 @@ const PaymentButton = ({
       
       if (error) {
         toast({
-          title: "支付失败",
+          title: t('paymentCanceled'),
           description: error.message,
           variant: "destructive",
         });
@@ -69,22 +71,24 @@ const PaymentButton = ({
         window.open(data.url, '_blank');
       } else {
         toast({
-          title: "支付失败",
-          description: "无法创建支付会话",
+          title: t('paymentCanceled'),
+          description: t('paymentCanceled'),
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Payment error:", error);
       toast({
-        title: "支付失败",
-        description: "处理您的请求时出错",
+        title: t('paymentCanceled'),
+        description: t('paymentCanceled'),
         variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
   };
+
+  const defaultLabel = t('selectService');
 
   return (
     <Button 
@@ -93,7 +97,7 @@ const PaymentButton = ({
       className={className}
       {...props}
     >
-      {loading ? "处理中..." : children || label}
+      {loading ? t('processing') : children || label || defaultLabel}
     </Button>
   );
 };
