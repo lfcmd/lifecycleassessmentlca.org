@@ -5,6 +5,18 @@ import { componentTagger } from "lovable-tagger";
 
 // In vite.config.ts
 export default defineConfig({
-  base: '/',  // Change this if your site will be in a subdirectory
-  // other config...
+  base: '/',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    emptyOutDir: true,
+    sourcemap: false,
+    minify: 'terser',
+  },
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src')
+    }
+  }
 })
